@@ -1,0 +1,25 @@
+.car-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.track {
+  flex: 1;
+  height: 4px;
+  background: #ddd;
+  margin-left: 10px;
+  position: relative;
+}
+
+.car {
+  position: absolute;
+  top: -20px;
+  transition: left linear;
+}
+
+.buttomUi{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
