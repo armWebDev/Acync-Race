@@ -15,9 +15,7 @@ export default function Garage({ onSelectCar }: GarageProps) {
   const [totalCars, setTotalCars] = useState(0);
   const [raceRunning, setRaceRunning] = useState(false);
   const [raceTimes, setRaceTimes] = useState<{ [id: number]: number }>({});
-  const [winner, setWinner] = useState<{ car: CarType; time: number } | null>(
-    null
-  );
+  const [winner, setWinner] = useState<{ car: CarType; time: number } | null>(null);
   const [loading, setLoading] = useState(false);
 
   const PAGE_LIMIT = 7;
@@ -31,10 +29,16 @@ export default function Garage({ onSelectCar }: GarageProps) {
       const response = await api.getCars(page, PAGE_LIMIT);
       setCars(response.data);
       setTotalCars(response.total);
+      
+      const totalPages = Math.ceil(response.total / PAGE_LIMIT) || 1;
+      if (page > totalPages) {
+        setPage(totalPages);
+      }
     } catch (e) {
       console.error("Failed to load cars:", e);
       setCars([]);
       setTotalCars(0);
+      setPage(1);
     }
   }
 
@@ -45,8 +49,19 @@ export default function Garage({ onSelectCar }: GarageProps) {
 
     const times: { [id: number]: number } = {};
 
+    let allCars: CarType[] = [];
+    try {
+      const response = await api.getCars(); 
+      allCars = response.data;
+    } catch (e) {
+      console.error("Failed to fetch all cars for race:", e);
+      setRaceRunning(false);
+      setLoading(false);
+      return;
+    }
+
     const results = await Promise.all(
-      cars.map(async (car) => {
+      allCars.map(async (car) => {
         try {
           const { velocity, distance } = await api.startEngine(car.id);
           const time = distance / velocity;
@@ -152,7 +167,7 @@ export default function Garage({ onSelectCar }: GarageProps) {
         </button>
         <button
           onClick={() => setPage((p) => p + 1)}
-          disabled={cars.length < PAGE_LIMIT || loading}
+          disabled={page >= Math.ceil(totalCars / PAGE_LIMIT) || loading}
           style={{ marginLeft: 8 }}
         >
           Next

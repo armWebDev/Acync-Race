@@ -5,23 +5,56 @@ import { api } from "../api/api";
 interface CarProps {
   car: CarType;
   raceStarted: boolean;
-  raceTime?: number; 
+  raceTime?: number;
   onSelect: (car: CarType) => void;
   onRemoved?: (id: number) => void;
 }
 
 export default function Car({ car, raceStarted, raceTime = 3000, onSelect, onRemoved }: CarProps) {
   const [position, setPosition] = useState(0);
+  const [isDriving, setIsDriving] = useState(false);
 
   useEffect(() => {
-    if (raceStarted) {
-      setPosition(100); 
-      const animationDuration = raceTime;
-      setTimeout(() => setPosition(0), animationDuration);
-    } else {
-      setPosition(0); 
+    if (raceStarted && raceTime) {
+      setIsDriving(true);
+      setPosition(90); // Move to 90% of track (leave margin)
+      setTimeout(() => {
+        setPosition(0);
+        setIsDriving(false);
+      }, raceTime);
+    } else if (!raceStarted) {
+      setPosition(0);
+      setIsDriving(false);
     }
   }, [raceStarted, raceTime]);
+
+  async function handleStart() {
+    try {
+      const { velocity, distance } = await api.startEngine(car.id);
+      const time = distance / velocity; // in seconds
+      setIsDriving(true);
+      setPosition(90); // Start animation
+      setTimeout(() => setPosition(0), time * 1000); // Reset after duration
+      const { success } = await api.driveCar(car.id);
+      if (!success) {
+        setPosition(0); // Engine broke (500 error)
+        setIsDriving(false);
+      }
+    } catch (err) {
+      console.warn("Start failed:", err);
+      setIsDriving(false);
+    }
+  }
+
+  async function handleStop() {
+    try {
+      await api.stopEngine(car.id);
+      setPosition(0);
+      setIsDriving(false);
+    } catch (err) {
+      console.warn("Stop failed:", err);
+    }
+  }
 
   async function handleRemove() {
     try {
@@ -30,7 +63,7 @@ export default function Car({ car, raceStarted, raceTime = 3000, onSelect, onRem
         onRemoved(car.id);
       }
     } catch (err) {
-      console.warn(err);
+      console.warn("Remove failed:", err);
     }
   }
 
@@ -39,6 +72,8 @@ export default function Car({ car, raceStarted, raceTime = 3000, onSelect, onRem
       <div className="buttomUi">
         <button onClick={() => onSelect(car)}>Select</button>
         <button onClick={handleRemove}>Remove</button>
+        <button onClick={handleStart} disabled={isDriving}>Start</button>
+        <button onClick={handleStop} disabled={!isDriving}>Stop</button>
       </div>
       <span>{car.name}</span>
       <div className="track">
@@ -46,7 +81,7 @@ export default function Car({ car, raceStarted, raceTime = 3000, onSelect, onRem
           className="car"
           style={{
             left: `${position}%`,
-            transition: raceStarted ? `left ${raceTime / 1000}s linear` : "none",
+            transition: isDriving ? `left ${raceTime / 1000}s linear` : "none",
           }}
           width="50"
           viewBox="0 0 324.018 324.017"
