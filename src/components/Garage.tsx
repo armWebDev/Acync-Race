@@ -11,11 +11,16 @@ interface GarageProps {
 
 export default function Garage({ onSelectCar }: GarageProps) {
   const [cars, setCars] = useState<CarType[]>([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(() => {
+    const savedPage = localStorage.getItem("garagePage");
+    return savedPage ? Number(savedPage) : 1;
+  });
   const [totalCars, setTotalCars] = useState(0);
   const [raceRunning, setRaceRunning] = useState(false);
   const [raceTimes, setRaceTimes] = useState<{ [id: number]: number }>({});
-  const [winner, setWinner] = useState<{ car: CarType; time: number } | null>(null);
+  const [winner, setWinner] = useState<{ car: CarType; time: number } | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
 
   const PAGE_LIMIT = 7;
@@ -24,12 +29,16 @@ export default function Garage({ onSelectCar }: GarageProps) {
     loadCars();
   }, [page]);
 
+  useEffect(() => {
+    localStorage.setItem("garagePage", String(page));
+  }, [page]);
+
   async function loadCars() {
     try {
       const response = await api.getCars(page, PAGE_LIMIT);
       setCars(response.data);
       setTotalCars(response.total);
-      
+
       const totalPages = Math.ceil(response.total / PAGE_LIMIT) || 1;
       if (page > totalPages) {
         setPage(totalPages);
@@ -51,7 +60,7 @@ export default function Garage({ onSelectCar }: GarageProps) {
 
     let allCars: CarType[] = [];
     try {
-      const response = await api.getCars(); 
+      const response = await api.getCars();
       allCars = response.data;
     } catch (e) {
       console.error("Failed to fetch all cars for race:", e);
@@ -65,7 +74,8 @@ export default function Garage({ onSelectCar }: GarageProps) {
         try {
           const { velocity, distance } = await api.startEngine(car.id);
           const time = distance / velocity;
-          times[car.id] = time;
+
+          setRaceTimes((prev) => ({ ...prev, [car.id]: time }));
 
           const success = await startingDrive(car.id);
           if (!success) return null;
@@ -77,7 +87,8 @@ export default function Garage({ onSelectCar }: GarageProps) {
             try {
               const { velocity, distance } = await api.startEngine(car.id);
               const time = distance / velocity;
-              times[car.id] = time;
+
+              setRaceTimes((prev) => ({ ...prev, [car.id]: time }));
 
               const success = await startingDrive(car.id);
               if (!success) return null;
