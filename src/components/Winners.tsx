@@ -10,32 +10,61 @@ interface WinnerWithCar extends WinnerType {
 
 export default function Winners() {
   const [winners, setWinners] = useState<WinnerWithCar[]>([]);
+  const [page, setPage] = useState<number>(() => {
+    const savedPage = localStorage.getItem("winnersPage");
+    return savedPage ? Number(savedPage) : 1;
+  });
+  const [totalWinners, setTotalWinners] = useState(0);
 
-  async function getWinners() {
-    let winners = await api.getWinners();
-    const winnersWithCar = await Promise.all(
-      winners.map(async (winner) => {
-        const car = await api.getCar(winner.id);
-        return {
-          ...winner,
-          name: car ? car.name : "Unknown",
-          color: car ? car.color : "#000000",
-        };
-      })
-    );
-    setWinners(winnersWithCar);
-  }
+  const PAGE_LIMIT = 7; 
 
   useEffect(() => {
-    async function fetchWinners() {
-      await getWinners();
+    loadWinners();
+  }, [page]);
+
+  useEffect(() => {
+    localStorage.setItem("winnersPage", String(page));
+  }, [page]);
+
+  async function loadWinners() {
+    try {
+      const allWinners = await api.getWinners(); 
+      setTotalWinners(allWinners.length);
+
+      const startIndex = (page - 1) * PAGE_LIMIT;
+      const pagedWinners = allWinners.slice(
+        startIndex,
+        startIndex + PAGE_LIMIT
+      );
+
+      const winnersWithCar = await Promise.all(
+        pagedWinners.map(async (winner) => {
+          const car = await api.getCar(winner.id);
+          return {
+            ...winner,
+            name: car ? car.name : "Unknown",
+            color: car ? car.color : "#000000",
+          };
+        })
+      );
+
+      setWinners(winnersWithCar);
+    } catch (err) {
+      console.error("Failed to load winners:", err);
+      setWinners([]);
+      setTotalWinners(0);
+      setPage(1);
     }
-    fetchWinners();
-  }, []);
+  }
+
+  const totalPages = Math.ceil(totalWinners / PAGE_LIMIT) || 1;
 
   return (
     <div className="winners-container">
-      <h2>Winners</h2>
+      <h2>
+        Winners ({totalWinners}) — Page {page}
+      </h2>
+
       <table className="winners-table">
         <thead>
           <tr>
@@ -49,7 +78,7 @@ export default function Winners() {
         <tbody>
           {winners.map((winner, index) => (
             <tr key={winner.id}>
-              <td>{index + 1}</td>
+              <td>{(page - 1) * PAGE_LIMIT + index + 1}</td>
               <td>
                 <svg
                   width="30"
@@ -94,6 +123,22 @@ export default function Winners() {
           ))}
         </tbody>
       </table>
+
+      <div style={{ marginTop: 16 }}>
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={page >= totalPages}
+          style={{ marginLeft: 8 }}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
