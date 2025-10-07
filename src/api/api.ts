@@ -1,6 +1,6 @@
 import type { CarType, EngineResponse, WinnerType } from "../types";
 
-const BASE = "https://async-race-api-1-9x4e.onrender.com";
+const BASE = 'http://localhost:3000';
 
 export const api = {
   getCars: async (page = 1, limit = 7): Promise<{ data: CarType[]; total: number }> => {

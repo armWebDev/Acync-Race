@@ -53,3 +53,24 @@
   background-color: #222;
   color: #fff;
 }
+
+
+
+@media (max-width: 480px) {
+  .winner-banner {
+    padding: 20px 20px;
+  }
+
+  .winner-text {
+    font-size: 20px;
+  }
+
+  .winner-name {
+    font-size: 18px;
+  }
+
+  .winner-close {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}

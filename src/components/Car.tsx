@@ -7,9 +7,10 @@ interface CarProps {
   raceTime?: number;
   onSelect: (car: CarType) => void;
   onRemoved?: (id: number) => void;
+  raceRunning: boolean;
 }
 
-export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
+export default function Car({ car, raceTime, onSelect, onRemoved, raceRunning }: CarProps) {
   const [position, setPosition] = useState(0);
   const [isDriving, setIsDriving] = useState(false);
 
@@ -24,7 +25,7 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
     }, raceTime);
 
     return () => clearTimeout(timer);
-  }, [raceTime]);
+  }, [raceTime, isDriving]); 
 
   async function handleStart() {
     try {
@@ -44,7 +45,7 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
       setTimeout(() => {
         setIsDriving(false);
       }, time);
-    } catch (err) {
+    } catch (err: unknown) {
       console.warn("Start failed:", err);
       setIsDriving(false);
     }
@@ -53,9 +54,9 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
   async function handleStop() {
     try {
       await api.stopEngine(car.id);
-      setPosition(0); 
+      setPosition(0);
       setIsDriving(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.warn("Stop failed:", err);
     }
   }
@@ -64,8 +65,13 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
     try {
       await api.deleteCar(car.id);
       if (onRemoved) onRemoved(car.id);
-    } catch (err) {
-      console.warn("Remove failed:", err);
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes("Failed to delete car")) {
+        console.warn(err);
+        if (onRemoved) onRemoved(car.id);
+      } else {
+        console.warn(err);
+      }
     }
   }
 
@@ -73,13 +79,13 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
     <div className="car-container">
       <div className="buttomUi">
         <div>
-          <button onClick={() => onSelect(car)}>Select</button>
+          <button onClick={() => onSelect(car)} disabled={raceRunning}>Select</button>
           <button onClick={handleStart} disabled={isDriving}>
             Start
           </button>
         </div>
         <div>
-          <button onClick={handleRemove}>Remove</button>
+          <button onClick={handleRemove} disabled={raceRunning}>Remove</button>
           <button onClick={handleStop} disabled={!isDriving}>
             Stop
           </button>
@@ -113,7 +119,8 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
             c-0.828-0.823-1.533-1.771-2.237-2.703c-0.652-0.854-1.222-1.75-1.761-2.688c-2.164-3.744-3.5-8.025-3.5-12.655
             c0-14.069,11.454-25.513,25.518-25.513c14.064,0,25.518,11.449,25.518,25.513c0,5.126-1.553,9.875-4.152,13.878
             c-0.605,0.922-1.326,1.755-2.04,2.594c-0.782,0.922-1.616,1.781-2.527,2.584c5.209,0.155,9.699,0.232,13.546,0.232
-            c19.563,0,23.385-1.688,23.861-5.018C324.114,202.108,324.472,199.602,317.833,197.111z" />
+            c19.563,0,23.385-1.688,23.861-5.018C324.114,202.108,324.472,199.602,317.833,197.111z"
+          />
         </svg>
       </div>
     </div>
