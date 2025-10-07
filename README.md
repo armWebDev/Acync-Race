@@ -1,139 +1,78 @@
-# 🏁 Async Race
+# 🚗 Async Race App
 
-## 🚀 Deployment & Score
-
-**Live Demo:** [🔗 Add your deployed UI link here (GitHub Pages / Netlify / Vercel / etc.)]  
-**Total Score:** `XXX / 400`
+### ✅ Score: 390 / 400 pts  
+### 🌐 Deployed App: https://jazzy-mandazi-4e0c42.netlify.app/
 
 ---
 
-## ✅ Self-Check Checklist
+### 🚀 UI Deployment (20 pts)
 
-### 🚀 UI Deployment
-
-- [ ] **Deployment Platform:** Successfully deploy the UI on one of the following platforms: GitHub Pages, Netlify, Vercel, Cloudflare Pages, etc.  
-  _→ 10 pts_
-
----
-
-### ✅ Requirements to Commits and Repository
-
-- [ ] **Commit guidelines compliance:** All commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/).  
-  _→ 10 pts_
-- [ ] **Checklist included in README.md**  
-  _→ 5 pts_
-- [ ] **Score calculation added to README.md**  
-  _→ 5 pts_
-- [ ] **UI Deployment link in README.md**  
-  _→ 5 pts_
-
-_Total: 25 pts_
+- [ ] **Deployment Platform** — Successfully deploy the UI (GitHub Pages, Netlify, Vercel, Cloudflare Pages, etc.)
+- [ ] **Commit Guidelines Compliance** — All commits follow the required message format and are meaningful
+- [ ] **Checklist Included in README.md** — This checklist is added and updated in README
+- [ ] **Score Calculation Added** — Final calculated score shown at top of README
+- [ ] **UI Deployment Link Added** — Live link included at top of README
 
 ---
 
-### 🏗️ Basic Structure (80 pts)
+### 🧩 Basic Structure (80 pts)
 
-- [ ] **Two Views (10 pts):** Implement “Garage” and “Winners”.
-- [ ] **Garage View Content (30 pts):**  
+- [ ] **Two Views (10 pts)** — Implement "Garage" and "Winners" views
+- [ ] **Garage View Content (30 pts)**  
   - [ ] Name of view  
   - [ ] Car creation and editing panel  
   - [ ] Race control panel  
   - [ ] Garage section
-- [ ] **Winners View Content (10 pts):**  
-  - [ ] Name of view  
+- [ ] **Winners View Content (10 pts)**  
+  - [ ] Name of view ("Winners")  
   - [ ] Winners table  
   - [ ] Pagination
-- [ ] **Persistent State (30 pts):** Maintain view state when navigating between views (pagination, inputs, etc.)
-
-_Total: 80 pts_
+- [ ] **Persistent State (30 pts)** — Preserve page numbers and inputs when navigating between views
 
 ---
 
-### 🚗 Garage View (90 pts)
+### 🚘 Garage View (90 pts)
 
-- [ ] **CRUD Operations (20 pts):** Create, update, delete cars.  
-- [ ] **Color Selection (10 pts):** Car color picker and display.  
-- [ ] **Random Car Creation (20 pts):** Generate 100 random cars.  
-- [ ] **Car Management Buttons (10 pts):** Update/delete per car.  
-- [ ] **Pagination (10 pts):** 7 cars per page.  
-- [ ] **EXTRA POINTS (20 pts):**
-  - [ ] Empty garage message.  
-  - [ ] Auto-switch to previous page when last car removed.
-
-_Total: 90 pts_
+- [ ] **Car Creation and Editing (20 pts)** — CRUD operations for cars  
+- [ ] **Color Selection (10 pts)** — Select car color from RGB palette  
+- [ ] **Random Car Creation (20 pts)** — Generate 100 random cars per click with random names/colors  
+- [ ] **Car Management Buttons (10 pts)** — Update or delete buttons per car  
+- [ ] **Pagination (10 pts)** — 7 cars per page  
+- [ ] **Extra Points (20 pts)**  
+  - [ ] Empty Garage message  
+  - [ ] Move to previous page when last car deleted
 
 ---
 
 ### 🏆 Winners View (50 pts)
 
-- [ ] **Display Winners (15 pts):** Show winners with stats.  
-- [ ] **Pagination (10 pts):** 10 winners per page.  
-- [ ] **Winners Table (15 pts):** Show №, car, name, wins, best time.  
-- [ ] **Sorting (10 pts):** Sort by wins and best time (asc/desc).
-
-_Total: 50 pts_
+- [ ] **Display Winners (15 pts)** — Show winners after each race  
+- [ ] **Pagination (10 pts)** — 10 winners per page  
+- [ ] **Winners Table (15 pts)** — Columns: №, image, name, wins, best time  
+- [ ] **Sorting Functionality (10 pts)** — Sort by wins and best time (asc/desc)
 
 ---
 
-### 🏎️ Race (170 pts)
+### 🏎️ Race Functionality (150 pts)
 
-- [ ] **Start Engine Animation (20 pts):** Start -> drive -> stop on 500 error.  
-- [ ] **Stop Engine Animation (20 pts):** Return to start position.  
-- [ ] **Responsive Animation (30 pts):** Works well at 500px width.  
-- [ ] **Start Race Button (10 pts):** Start race for all cars on page.  
-- [ ] **Reset Race Button (15 pts):** Reset all cars to start.  
-- [ ] **Winner Announcement (5 pts):** Show winner name banner.  
-- [ ] **Button States (20 pts):** Disable inappropriate buttons.  
-- [ ] **Actions During Race (50 pts):** Handle adding/removing/editing cars and navigation during race gracefully.
-
-_Total: 170 pts_
+- [ ] **Start Engine Animation (20 pts)** — Animate car start, handle 500 errors  
+- [ ] **Stop Engine Animation (10 pts)** — Stop car and return to start  
+- [ ] **Responsive Animation (20 pts)** — Works smoothly on screens ≥500px  
+- [ ] **Start Race Button (10 pts)** — Starts all cars on current page  
+- [ ] **Reset Race Button (15 pts)** — Returns all cars to starting positions  
+- [ ] **Winner Announcement (5 pts)** — Show winning car’s name in message  
+- [ ] **Button States (20 pts)** — Disable Start/Stop when inappropriate  
+- [ ] **Actions During Race (50 pts)** — Prevent edits/deletes/page changes during race
 
 ---
 
-### 🎨 Prettier & ESLint (10 pts)
+### 🎨 Code Style and Linting (10 pts)
 
-- [ ] **Prettier Setup (5 pts):** `format` and `ci:format` scripts.  
-- [ ] **ESLint (5 pts):** Airbnb style + `lint` script in package.json.
-
-_Total: 10 pts_
+- [ ] **Prettier Setup (5 pts)** — `format` and `ci:format` scripts in `package.json`
+- [ ] **ESLint Config (5 pts)** — Airbnb rules + TypeScript strict settings
 
 ---
 
-### 🌟 Overall Code Quality (100 pts) *(evaluated by reviewer)*
+### Thank you for opportunity
 
-- [ ] Modular architecture (API, UI, state separated)  
-- [ ] Small functions (< 40 lines), no magic numbers  
-- [ ] Clear, readable naming conventions  
-- [ ] Minimal duplication  
-- [ ] Extra features (e.g., custom hooks, React Router, portals)
-
-_Total: up to 100 pts (by reviewer)_
-
----
-
-## 🧩 Technologies Used
-
-- **Framework:** React 18 + TypeScript  
-- **State Manager:** Redux Toolkit / Zustand / Context API *(choose one)*  
-- **Router:** React Router v6  
-- **Styling:** CSS Modules / Tailwind / Styled Components  
-- **Build Tool:** Vite or CRA  
-- **API:** [Async Race API](https://github.com/mikhama/async-race-api)
-
----
-
-## ⚙️ Scripts
-
-| Command | Description |
-|----------|--------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build production bundle |
-| `npm run preview` | Preview built app |
-| `npm run lint` | Run ESLint checks |
-| `npm run format` | Auto-format with Prettier |
-| `npm run ci:format` | Check formatting issues |
-
----
-
-## 🎯 Final Total Score: 380 / 400
 
