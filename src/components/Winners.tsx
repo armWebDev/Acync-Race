@@ -22,40 +22,36 @@ export default function Winners() {
     loadWinners();
   }, [page]);
 
+  
   useEffect(() => {
     localStorage.setItem("winnersPage", String(page));
   }, [page]);
 
   async function loadWinners() {
-    try {
-      const allWinners = await api.getWinners(); 
-      setTotalWinners(allWinners.length);
+  try {
+    const allWinners = await api.getWinners(); 
+    setTotalWinners(allWinners.length);
 
-      const startIndex = (page - 1) * PAGE_LIMIT;
-      const pagedWinners = allWinners.slice(
-        startIndex,
-        startIndex + PAGE_LIMIT
-      );
+    const winnersWithCar = await Promise.all(
+      allWinners.map(async (winner) => {
+        const car = await api.getCar(winner.id);
+        return {
+          ...winner,
+          name: car ? car.name : "Unknown",
+          color: car ? car.color : "#000000",
+        };
+      })
+    );
 
-      const winnersWithCar = await Promise.all(
-        pagedWinners.map(async (winner) => {
-          const car = await api.getCar(winner.id);
-          return {
-            ...winner,
-            name: car ? car.name : "Unknown",
-            color: car ? car.color : "#000000",
-          };
-        })
-      );
-
-      setWinners(winnersWithCar);
-    } catch (err) {
-      console.error("Failed to load winners:", err);
-      setWinners([]);
-      setTotalWinners(0);
-      setPage(1);
-    }
+    setWinners(winnersWithCar);
+  } catch (err) {
+    console.error("Failed to load winners:", err);
+    setWinners([]);
+    setTotalWinners(0);
+    setPage(1);
   }
+}
+
 
   const totalPages = Math.ceil(totalWinners / PAGE_LIMIT) || 1;
 

@@ -4,7 +4,7 @@ import { api } from "../api/api";
 
 interface CarProps {
   car: CarType;
-  raceTime?: number; // time in ms for this car, calculated in Garage
+  raceTime?: number;
   onSelect: (car: CarType) => void;
   onRemoved?: (id: number) => void;
 }
@@ -13,36 +13,37 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
   const [position, setPosition] = useState(0);
   const [isDriving, setIsDriving] = useState(false);
 
-  // Trigger animation when raceTime is updated
   useEffect(() => {
-    if (raceTime && !isDriving) {
-      setIsDriving(true);
-      setPosition(90); // move to 90% of track
-      const timer = setTimeout(() => {
-        setPosition(0);
-        setIsDriving(false);
-      }, raceTime);
+    if (!raceTime || isDriving) return;
 
-      return () => clearTimeout(timer);
-    }
+    setIsDriving(true);
+    setPosition(90);
+
+    const timer = setTimeout(() => {
+      setIsDriving(false);
+    }, raceTime);
+
+    return () => clearTimeout(timer);
   }, [raceTime]);
 
   async function handleStart() {
     try {
       const { velocity, distance } = await api.startEngine(car.id);
-      const time = (distance / velocity) * 1000; // convert seconds to ms
-      setIsDriving(true);
-      setPosition(90);
-      setTimeout(() => {
-        setPosition(0);
-        setIsDriving(false);
-      }, time);
+      const time = (distance / velocity) * 1000;
 
-      const { success } = await api.driveCar(car.id);
-      if (!success) {
-        setPosition(0);
+      setIsDriving(true);
+      requestAnimationFrame(() => {
+        setPosition(90);
+      });
+
+      const driveResult = await api.driveCar(car.id);
+      if (!driveResult.success) {
         setIsDriving(false);
       }
+
+      setTimeout(() => {
+        setIsDriving(false);
+      }, time);
     } catch (err) {
       console.warn("Start failed:", err);
       setIsDriving(false);
@@ -52,7 +53,7 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
   async function handleStop() {
     try {
       await api.stopEngine(car.id);
-      setPosition(0);
+      setPosition(0); 
       setIsDriving(false);
     } catch (err) {
       console.warn("Stop failed:", err);
@@ -71,10 +72,18 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
   return (
     <div className="car-container">
       <div className="buttomUi">
-        <button onClick={() => onSelect(car)}>Select</button>
-        <button onClick={handleRemove}>Remove</button>
-        <button onClick={handleStart} disabled={isDriving}>Start</button>
-        <button onClick={handleStop} disabled={!isDriving}>Stop</button>
+        <div>
+          <button onClick={() => onSelect(car)}>Select</button>
+          <button onClick={handleStart} disabled={isDriving}>
+            Start
+          </button>
+        </div>
+        <div>
+          <button onClick={handleRemove}>Remove</button>
+          <button onClick={handleStop} disabled={!isDriving}>
+            Stop
+          </button>
+        </div>
       </div>
       <span>{car.name}</span>
       <div className="track">
@@ -82,15 +91,16 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
           className="car"
           style={{
             left: `${position}%`,
-            transition: isDriving && raceTime ? `left ${raceTime / 1000}s linear` : "none",
+            transition: isDriving
+              ? `left ${raceTime ? raceTime / 1000 : 3}s linear`
+              : "none",
           }}
           width="50"
           viewBox="0 0 324.018 324.017"
           fill={car.color}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path
-            d="M317.833,197.111c3.346-11.148,2.455-20.541-2.65-27.945c-9.715-14.064-31.308-15.864-35.43-16.076l-8.077-4.352
+          <path d="M317.833,197.111c3.346-11.148,2.455-20.541-2.65-27.945c-9.715-14.064-31.308-15.864-35.43-16.076l-8.077-4.352
             l-0.528-0.217c-8.969-2.561-42.745-3.591-47.805-3.733c-7.979-3.936-14.607-7.62-20.475-10.879
             c-20.536-11.413-34.107-18.958-72.959-18.958c-47.049,0-85.447,20.395-90.597,23.25c-2.812,0.212-5.297,0.404-7.646,0.59
             l-6.455-8.733l7.34,0.774c2.91,0.306,4.267-1.243,3.031-3.459c-1.24-2.216-4.603-4.262-7.519-4.57l-23.951-2.524
@@ -103,8 +113,7 @@ export default function Car({ car, raceTime, onSelect, onRemoved }: CarProps) {
             c-0.828-0.823-1.533-1.771-2.237-2.703c-0.652-0.854-1.222-1.75-1.761-2.688c-2.164-3.744-3.5-8.025-3.5-12.655
             c0-14.069,11.454-25.513,25.518-25.513c14.064,0,25.518,11.449,25.518,25.513c0,5.126-1.553,9.875-4.152,13.878
             c-0.605,0.922-1.326,1.755-2.04,2.594c-0.782,0.922-1.616,1.781-2.527,2.584c5.209,0.155,9.699,0.232,13.546,0.232
-            c19.563,0,23.385-1.688,23.861-5.018C324.114,202.108,324.472,199.602,317.833,197.111z"
-          />
+            c19.563,0,23.385-1.688,23.861-5.018C324.114,202.108,324.472,199.602,317.833,197.111z" />
         </svg>
       </div>
     </div>

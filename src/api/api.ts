@@ -1,6 +1,6 @@
 import type { CarType, EngineResponse, WinnerType } from "../types";
 
-const BASE = "http://127.0.0.1:3000";
+const BASE = "https://async-race-api-1-9x4e.onrender.com";
 
 export const api = {
   getCars: async (page = 1, limit = 7): Promise<{ data: CarType[]; total: number }> => {
@@ -119,6 +119,21 @@ export const api = {
       method: "DELETE",
     });
     if (!res.ok) throw new Error("Failed to delete winner");
+  },
+
+  getCarsAll: async (): Promise<CarType[]> => {
+    const res = await fetch(`${BASE}/garage`);
+    if (!res.ok) throw new Error("Failed to fetch all cars");
+    return res.json() as Promise<CarType[]>;
+  },
+
+  resetAllEngines: async (): Promise<void> => {
+    try {
+      const cars = await api.getCarsAll();
+      await Promise.allSettled(cars.map((c) => api.stopEngine(c.id)));
+    } catch (err) {
+      console.warn("resetAllEngines error:", err);
+    }
   },
 };
 

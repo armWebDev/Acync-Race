@@ -12,7 +12,6 @@ export default function App() {
   const [updatedCarColor, setUpdatedCarColor] = useState("#000000");
   const [selectedCar, setSelectedCar] = useState<CarType | null>(null);
 
-  // 🔹 car name + color randomizer
   const brands = [
     "Tesla",
     "BMW",
@@ -56,7 +55,6 @@ export default function App() {
     }
   }, [selectedCar]);
 
-  // 🔹 Create one car
   const handleCreate = async () => {
     try {
       const newCar: Omit<CarType, "id"> = {
@@ -72,7 +70,6 @@ export default function App() {
     }
   };
 
-  // 🔹 Update selected car
   const handleUpdate = async () => {
     if (!selectedCar) {
       alert(`You don’t select any car to update`);
@@ -89,7 +86,6 @@ export default function App() {
     setCarColor("#000000");
   };
 
-  // 🔹 Generate 100 random cars
   const handleGenerateCars = async () => {
     try {
       const requests = Array.from({ length: 100 }, () =>
@@ -100,7 +96,7 @@ export default function App() {
       );
 
       await Promise.all(requests);
-      window.location.reload(); // refresh garage
+      window.location.reload(); 
     } catch (err) {
       console.error("Error generating cars:", err);
     }
@@ -119,7 +115,6 @@ export default function App() {
           gap: "20px",
         }}
       >
-        {/* 🔹 Navigation buttons */}
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={() => setPage("garage")}
@@ -147,7 +142,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* 🔹 Create car form */}
         <div style={{ display: "flex", gap: "10px" }}>
           <input
             type="color"
@@ -180,7 +174,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* 🔹 Update car form */}
         <div style={{ display: "flex", gap: "10px" }}>
           <input
             type="color"
@@ -213,7 +206,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* 🔹 Generate random cars */}
         <div>
           <button
             onClick={handleGenerateCars}
