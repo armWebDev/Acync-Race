@@ -135,5 +135,5 @@ _Total: up to 100 pts (by reviewer)_
 
 ---
 
-## 📁 Project Structure Example
+## 🎯 Final Total Score: 380 / 400
 
