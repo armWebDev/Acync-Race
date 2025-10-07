@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Garage from "./components/Garage";
 import Winners from "./components/Winners";
-import { api } from "./api/api";
 import type { CarType } from "./types";
+
+type GarageRef = {
+  addCar?: (car: Omit<CarType, "id">) => Promise<void>;
+  updateCar?: (car: CarType) => Promise<void>;
+};
 
 export default function App() {
   const [page, setPage] = useState<"garage" | "winners">("garage");
@@ -11,6 +15,7 @@ export default function App() {
   const [carColor, setCarColor] = useState("#000000");
   const [updatedCarColor, setUpdatedCarColor] = useState("#000000");
   const [selectedCar, setSelectedCar] = useState<CarType | null>(null);
+  const garageRef = useRef<GarageRef>({});
 
   const brands = [
     "Tesla",
@@ -56,50 +61,39 @@ export default function App() {
   }, [selectedCar]);
 
   const handleCreate = async () => {
-    try {
-      const newCar: Omit<CarType, "id"> = {
-        name: carName,
-        color: carColor,
-      };
-      await api.createCar(newCar);
-      window.location.reload();
-      setCarName("");
-      setCarColor("#000000");
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    if (!garageRef.current.addCar) return;
 
-  const handleUpdate = async () => {
-    if (!selectedCar) {
-      alert(`You don’t select any car to update`);
-      return;
-    }
-
-    await api.updateCar(selectedCar.id, {
-      name: updatedCarName,
-      color: updatedCarColor,
-    });
-
-    window.location.reload();
+    const newCar: Omit<CarType, "id"> = { name: carName, color: carColor };
+    await garageRef.current.addCar(newCar);
     setCarName("");
     setCarColor("#000000");
   };
 
-  const handleGenerateCars = async () => {
-    try {
-      const requests = Array.from({ length: 100 }, () =>
-        api.createCar({
-          name: getRandomName(),
-          color: getRandomColor(),
-        })
-      );
-
-      await Promise.all(requests);
-      window.location.reload(); 
-    } catch (err) {
-      console.error("Error generating cars:", err);
+  const handleUpdate = async () => {
+    if (!selectedCar) {
+      return;
     }
+    if (!garageRef.current.updateCar) return;
+
+    await garageRef.current.updateCar({
+      ...selectedCar,
+      name: updatedCarName,
+      color: updatedCarColor,
+    });
+
+    setUpdatedCarName("");
+    setUpdatedCarColor("#000000");
+  };
+
+  const handleGenerateCars = async () => {
+    if (!garageRef.current.addCar) return;
+
+    const requests = Array.from({ length: 100 }, () => {
+      const newCar = { name: getRandomName(), color: getRandomColor() };
+      return garageRef.current.addCar!(newCar);
+    });
+
+    await Promise.all(requests);
   };
 
   return (
@@ -224,7 +218,15 @@ export default function App() {
       </header>
 
       {page === "garage" ? (
-        <Garage onSelectCar={setSelectedCar} />
+        <Garage
+          onSelectCar={setSelectedCar}
+          onAddCar={(fn) => {
+            garageRef.current.addCar = fn;
+          }}
+          onUpdateCar={(fn) => {
+            garageRef.current.updateCar = fn;
+          }}
+        />
       ) : (
         <Winners />
       )}
