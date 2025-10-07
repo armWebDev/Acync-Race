@@ -56,80 +56,45 @@ export default function Garage({ onSelectCar }: GarageProps) {
     setRaceRunning(true);
     setLoading(true);
 
-    const times: { [id: number]: number } = {};
+    setRaceTimes({});
+    setWinner(null);
 
-    let allCars: CarType[] = [];
     try {
-      const response = await api.getCars();
-      allCars = response.data;
-    } catch (e) {
-      console.error("Failed to fetch all cars for race:", e);
+      const { data: allCars } = await api.getCars(1, 1000);
+      if (!allCars.length) return;
+
+      let winnerDeclared = false; 
+
+      await Promise.all(
+        allCars.map(async (car) => {
+          try {
+            const { velocity, distance } = await api.startEngine(car.id);
+            const time = distance / velocity;
+            setRaceTimes((prev) => ({ ...prev, [car.id]: time }));
+
+            const success = await startingDrive(car.id);
+            if (!success) return;
+
+            if (!winnerDeclared) {
+              winnerDeclared = true;
+              setWinner({ car, time });
+              try {
+                await saveOrUpdateWinner({ id: car.id, wins: 1, time });
+              } catch (err) {
+                console.warn("Failed to save winner:", err);
+              }
+            }
+          } catch (err) {
+            console.warn(`Car ${car.name} failed to start:`, err);
+          }
+        })
+      );
+    } catch (err) {
+      console.error("Race failed:", err);
+    } finally {
       setRaceRunning(false);
       setLoading(false);
-      return;
     }
-
-    const results = await Promise.all(
-      allCars.map(async (car) => {
-        try {
-          const { velocity, distance } = await api.startEngine(car.id);
-          const time = distance / velocity;
-
-          setRaceTimes((prev) => ({ ...prev, [car.id]: time }));
-
-          const success = await startingDrive(car.id);
-          if (!success) return null;
-
-          return { car, time };
-        } catch (err: any) {
-          if (err.message?.includes("429")) {
-            await new Promise((res) => setTimeout(res, 100));
-            try {
-              const { velocity, distance } = await api.startEngine(car.id);
-              const time = distance / velocity;
-
-              setRaceTimes((prev) => ({ ...prev, [car.id]: time }));
-
-              const success = await startingDrive(car.id);
-              if (!success) return null;
-
-              return { car, time };
-            } catch {
-              return null;
-            }
-          }
-          return null;
-        }
-      })
-    );
-
-    const finishedCars = results.filter(
-      (r): r is { car: CarType; time: number } => r !== null
-    );
-
-    setRaceTimes(times);
-
-    const first = finishedCars.length
-      ? finishedCars.reduce((a, b) => (a.time < b.time ? a : b))
-      : null;
-
-    if (first) {
-      setWinner({ car: first.car, time: first.time });
-
-      try {
-        await saveOrUpdateWinner({
-          id: first.car.id,
-          wins: 1,
-          time: first.time,
-        });
-        window.open("/winners", "_blank");
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-
-    setRaceRunning(false);
-    setLoading(false);
   }
 
   async function resetRace() {
@@ -161,7 +126,6 @@ export default function Garage({ onSelectCar }: GarageProps) {
           <Car
             key={car.id}
             car={car}
-            raceStarted={raceRunning}
             raceTime={raceTimes[car.id]}
             onSelect={onSelectCar}
             onRemoved={loadCars}
@@ -170,6 +134,7 @@ export default function Garage({ onSelectCar }: GarageProps) {
       </div>
 
       <div style={{ marginTop: 16 }}>
+        <hr />
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1 || loading}
@@ -189,7 +154,10 @@ export default function Garage({ onSelectCar }: GarageProps) {
         <WinnerBanner
           car={winner.car}
           time={winner.time}
-          onClose={() => setWinner(null)}
+          onClose={() => {
+            setWinner(null);
+            window.location.reload();
+          }}
         />
       )}
     </div>
