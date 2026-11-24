@@ -1,106 +1,151 @@
-# 🚗 Async Race App
+# 🚗 Async Race
 
-### ✅ Score: 400 / 400 pts  
-### 🌐 Deployed App: [https://jazzy-mandazi-4e0c42.netlify.app/](https://jazzy-mandazi-4e0c42.netlify.app/)
+### 🌐 Deployed app: https://jazzy-mandazi-4e0c42.netlify.app/
 
----
+### ✅ Score: 400 / 400
 
-### 🚀 UI Deployment (25 pts)
-
-- [x] **Deployment Platform (10 pts)** — Successfully deployed on Netlify
-- [x] **Commit Guidelines Compliance (10 pts)** — All commits follow Conventional Commits format
-- [x] **Checklist Included in README.md (5 pts)** — This checklist is added and updated
-- [x] **Score Calculation Added (5 pts)** — Final self-assessed score shown at top
-- [x] **UI Deployment Link Added (5 pts)** — Live link included at top
+> The app talks to the [Async Race API](https://github.com/mikhama/async-race-api) on `http://localhost:3000` —
+> start the server locally before opening the deployed link.
 
 ---
 
-### 🧩 Basic Structure (80 pts)
+## Checklist 400 / 400 pts
 
-- [x] **Two Views (10 pts)** — Implement "Garage" and "Winners"
-- [x] **Garage View Content (30 pts)**  
-  - [x] Name of view  
-  - [x] Car creation and editing panel  
-  - [x] Race control panel  
+### 🚀 UI Deployment
+
+- [x] **Deployment Platform:** Successfully deploy the UI on one of the following platforms: GitHub Pages, Netlify, Vercel, Cloudflare Pages, or a similar service.
+
+### ✅ Requirements to Commits and Repository
+
+- [x] **Commit guidelines compliance:** Ensure that all commits follow the specified commit guidelines, thereby promoting a clear and consistent commit history. This includes using meaningful commit messages that accurately describe the changes made.
+- [x] **Checklist included in README.md:** Include the project's checklist in the README.md file. Mark all implemented features to provide a clear overview of the project's completion status.
+- [x] **Score calculation:** Use this checklist to calculate your score. Check all implemented features, then calculate your score and put it at the top of the README.md.
+- [x] **UI Deployment link in README.md:** Place the link to the deployed UI at the top of the README.md file, alongside the calculated score.
+
+### Basic Structure (80 points)
+
+- [x] **Two Views (10 points):** Implement two primary views: "Garage" and "Winners".
+- [x] **Garage View Content (30 points):** The "Garage" view must display:
+  - [x] Name of view
+  - [x] Car creation and editing panel
+  - [x] Race control panel
   - [x] Garage section
-- [x] **Winners View Content (10 pts)**  
-  - [x] Name of view ("Winners")  
-  - [x] Winners table  
+- [x] **Winners View Content (10 points):** The "Winners" view should display:
+  - [x] Name of view ("Winners")
+  - [x] Winners table
   - [x] Pagination
-- [x] **Persistent State (30 pts)** — Preserve page numbers and input values when navigating between views
+- [x] **Persistent State (30 points):** Ensure the view state remains consistent when navigating between views. This includes preserving page numbers and input states. For example, page number shouldn't be reset, input controls should contain that they contained before switching, etc.
 
----
+### Garage View (90 points)
 
-### 🚘 Garage View (90 pts)
+- [x] **Car Creation And Editing Panel. CRUD Operations (20 points):** Enable users to create, update, and delete cars. A car has two attributes: "name" and "color". Empty and too long names should be handled. For "delete"-operation car should be deleted from "garage" table as well as from "winners".
+- [x] **Color Selection (10 points):** Allow color selection from an RGB palette, displaying the selected color on the car's image along with its name.
+- [x] **Random Car Creation (20 points):** There should be a button to create random cars (100 cars per click). Name should be assembled from two random parts, for example "Tesla" + "Model S", or "Ford" + "Mustang" (At least 10 different names for each part). Color should be also generated randomly.
+- [x] **Car Management Buttons (10 points):** Provide buttons near each car's image for updating its attributes or deleting it.
+- [x] **Pagination (10 points):** Implement pagination for the "Garage" view, displaying 7 cars per page.
+- [x] **EXTRA POINTS (20 points):**
+  - [x] **Empty Garage:** Handle empty garage with user friendly message "No Cars" or something like this.
+  - [x] **Empty Garage Page:** If you remove the last one car on the page, you should be moved on the previous page, to hide the empty one.
 
-- [x] **Car Creation and Editing (20 pts)** — CRUD operations for cars with name and color  
-- [x] **Color Selection (10 pts)** — Select car color from RGB palette and display  
-- [x] **Random Car Creation (20 pts)** — Generate 100 random cars per click with random names/colors  
-- [x] **Car Management Buttons (10 pts)** — Update or delete buttons per car  
-- [x] **Pagination (10 pts)** — 7 cars per page  
-- [x] **Extra Points (20 pts)**  
-  - [x] Empty garage message  
-  - [x] Auto-switch to previous page when last car on page is deleted
+### 🏆 Winners View (50 points)
 
----
+- [x] **Display Winners (15 points):** After some car wins it should be displayed at the "Winners view" table.
+- [x] **Pagination for Winners (10 points):** Implement pagination for the "Winners" view, with 10 winners per page.
+- [x] **Winners Table (15 points):** The table should include columns for the car's №, image, name, number of wins, and best time in seconds. If the same car wins more than once the number of wins should be incremented while best time should be saved only if it's better than the stored one.
+- [x] **Sorting Functionality (10 points):** Allow users to sort the table by the number of wins and best time, in ascending or descending order.
 
-### 🏆 Winners View (50 pts)
+### 🚗 Race (170 points)
 
-- [x] **Display Winners (15 pts)** — Show winners after each race  
-- [x] **Pagination (10 pts)** — 10 winners per page  
-- [x] **Winners Table (15 pts)** — Columns: №, car image, name, wins, best time  
-- [x] **Sorting Functionality (10 pts)** — Sort by wins and best time (asc/desc)
+- [x] **Start Engine Animation (20 points):** User clicks to the engine start button near each car -> UI is waiting for car's velocity answer -> animate the car and makes another request to drive. In case api returned 500 error car animation should be stopped.
+- [x] **Stop Engine Animation (20 points):** User clicks to the engine stop button near each car -> UI is waiting for answer for stopping engine -> car returned to it's initial place.
+- [x] **Responsive Animation (30 points):** Ensure car animations are fluid and responsive on screens as small as 500px.
+- [x] **Start Race Button (10 points):** Start button should start the race for all cars on the current page.
+- [x] **Reset Race Button (15 points):** Reset button should return all cars to their starting positions.
+- [x] **Winner Announcement (5 points):** After some car finishes first user should see the message contains car's name that shows which one has won.
+- [x] **Button States (20 points):** Start engine button should be disabled in case car is already in driving mode. As well as stop engine button should be disabled when car is on it's initial place.
+- [x] **Actions during the race (50 points):** Control over actions during a running race. Such as, deleting or editing a car, changing a page or view. Adding new cars. You can block buttons and stop the race. The main thing is to ensure predictable operation of the application.
 
----
+### 🎨 Prettier and ESLint Configuration (10 points)
 
-### 🏎️ Race Functionality (170 pts)
+- [x] **Prettier Setup (5 points):** Prettier is correctly set up with two scripts in package.json: `format` for auto-formatting and `ci:format` for checking issues.
+- [x] **ESLint Configuration (5 points):** ESLint is configured with the Airbnb style guide. A `lint` script in package.json runs ESLint checks. Configuration files should reflect strict TypeScript settings as per tsconfig.json.
 
-- [x] **Start Engine Animation (20 pts)** — Animate car start, handle 500 errors properly  
-- [x] **Stop Engine Animation (20 pts)** — Stop car and return to start position  
-- [x] **Responsive Animation (30 pts)** — Works smoothly on screens ≥500px  
-- [x] **Start Race Button (10 pts)** — Starts all cars on current page  
-- [x] **Reset Race Button (15 pts)** — Resets all cars to starting positions  
-- [x] **Winner Announcement (5 pts)** — Show banner with winning car’s name  
-- [x] **Button States (20 pts)** — Disable Start/Stop buttons when inappropriate  
-- [x] **Actions During Race (50 pts)** — Prevent edits/deletes/page changes during race or handle them gracefully
+### 🌟 Overall Code Quality (100 points) — _skipped during self-check_
 
----
+- [x] **Modular Design:** API layer, state management (Redux Toolkit) and UI are separated — see [Architecture](#️-architecture).
+- [x] **Function Modularization:** small, clearly named functions; helpers in `src/utils`; max 40 lines per function enforced by ESLint.
+- [x] **Code Duplication and Magic Numbers:** shared components/hooks, constants in `src/constants.ts`.
+- [x] **Readability:** clear names of variables, functions and modules.
+- [x] **Extra features:** custom hooks, React Router, Portal + native `<dialog>`.
 
-### 🎨 Code Style and Linting (10 pts)
+### Behaviour during a race
 
-- [x] **Prettier Setup (5 pts)** — `format` and `ci:format` scripts in `package.json`  
-- [x] **ESLint Config (5 pts)** — Airbnb rules + TypeScript strict settings
-
----
-
-### 🌟 Overall Code Quality (100 pts) *(reviewer evaluates)*
-
-- [x] Modular architecture: API, UI, and state separated  
-- [x] Functions ≤ 40 lines, no magic numbers  
-- [x] Clear and readable naming conventions  
-- [x] Minimal duplication  
-- [x] Extra features: custom hooks, React Router, portals, etc.
+- Race, Generate, Create/Update, Select/Remove, per-car A/B buttons and pagination are blocked while cars are on the track; **Reset** unlocks them.
+- Switching to Winners during a race is allowed: the race keeps running and cars are shown at their correct positions when you come back.
 
 ---
 
 ### 🧩 Technologies Used
 
-- **Framework:** React 18 + TypeScript  
-- **State Manager:** Redux Toolkit  
-- **Router:** React Router v6  
-- **Styling:** Tailwind CSS  
-- **Build Tool:** Vite  
+- **Framework:** React 19 + TypeScript (strict)
+- **State management:** Redux Toolkit (feature slices, async thunks, entity adapter)
+- **Routing:** React Router 7
+- **Tooling:** Vite, ESLint (Airbnb via `eslint-config-airbnb-extended` + typescript-eslint strict), Prettier
 - **API:** [Async Race API](https://github.com/mikhama/async-race-api)
+
+---
+
+### 🏗️ Architecture
+
+```
+src/
+├── api/            # HTTP layer: typed client + garage / engine / winners endpoints
+├── app/            # store setup, typed hooks, routes
+├── components/     # shared UI: Header, Pagination, CarIcon, ErrorMessage
+├── features/
+│   ├── garage/     # cars CRUD, pagination, create/update forms
+│   ├── race/       # engines, race flow, car animation, winner modal
+│   └── winners/    # winners table, sorting, pagination
+├── utils/          # pure helpers (formatting, pagination, random cars)
+└── constants.ts
+```
+
+Each feature owns its **slice** (state), **thunks** (async logic), **selectors**, **hooks** (the glue between
+store and UI) and **components** (presentational). Components never call the API directly.
+
+**Key decisions**
+
+- **No redundant requests.** Mutations update the cached page in place instead of refetching it.
+  Deleting a car sends `DELETE /garage/:id` followed by a winner lookup (`GET /winners?id=…`, always
+  `200`); `DELETE /winners/:id` is sent only if the car has actually won, so the console never shows 404s.
+  The garage page is reloaded only when a car from the next page has to move up, or the page became empty.
+- **Smart caching.** Returning to a view does not reload it. The winners cache is invalidated only when a
+  race is won or a car that actually had wins is deleted; renaming a car patches the table locally.
+- **Winners page in two requests**, not N + 1: one for the page, one for all its cars (`/garage?id=1&id=2…`).
+- **Race safety.** Each engine run has an id; a late `drive` response for a car that was stopped or reset is
+  ignored. Mutating actions and pagination are disabled while cars are on the track.
+- **Animation** uses the Web Animations API and is derived from timestamps in the store, so a broken car stops
+  exactly where it broke and cars keep their position when you switch views.
+- **Persistent state.** Page numbers, sorting and form drafts live in the store and survive navigation.
 
 ---
 
 ### ⚙️ Scripts
 
-| Command | Description |
-|----------|--------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build production bundle |
-| `npm run preview` | Preview built app |
-| `npm run lint` | Run ESLint checks |
-| `npm run format` | Auto-format with Prettier |
-| `npm run ci:format` | Check formatting issues |
+| Command             | Description                         |
+| ------------------- | ----------------------------------- |
+| `npm run dev`       | Start development server            |
+| `npm run build`     | Type-check and build for production |
+| `npm run preview`   | Preview the production build        |
+| `npm run lint`      | Run ESLint                          |
+| `npm run typecheck` | Run the TypeScript compiler         |
+| `npm run format`    | Format with Prettier                |
+| `npm run ci:format` | Check formatting                    |
+
+---
+
+### 🔌 Running locally
+
+1. Start the [Async Race API](https://github.com/mikhama/async-race-api) (`npm start`, port 3000).
+2. `npm install && npm run dev`
+3. Optionally point the app to another server: copy `.env.example` to `.env` and set `VITE_API_URL`.
